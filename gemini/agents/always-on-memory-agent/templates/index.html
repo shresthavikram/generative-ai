@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Always On Memory Agent Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0a0a0f; color: #e8e8e8; }
+        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; text-align: center; }
+        .memory-card { border-left: 3px solid #555; padding: 8px 16px; margin: 8px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+        .tag { background: rgba(139,92,246,0.15); color: #c4b5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+        .entity { background: rgba(59,130,246,0.15); color: #93c5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#08080d] p-6 border-r border-gray-800 flex flex-col">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <span>🧠</span> Agent Status
+            </h2>
+            <div id="status-container">
+                <div class="stat-card mb-4">
+                    <div id="agent-dot" class="text-2xl text-red-500">●</div>
+                    <div id="agent-status-text" class="text-[11px] uppercase tracking-widest text-gray-500">Agent Offline</div>
+                </div>
+            </div>
+
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4 mt-6">Memory Stats</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="stat-card">
+                    <div id="total-memories" class="text-2xl font-bold text-[#c4b5fd]">0</div>
+                    <div class="text-[10px] uppercase text-gray-600">Memories</div>
+                </div>
+                <div class="stat-card">
+                    <div id="pending-memories" class="text-2xl font-bold text-[#c4b5fd]">0</div>
+                    <div class="text-[10px] uppercase text-gray-600">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card mt-2">
+                <div id="consolidations" class="text-2xl font-bold text-[#c4b5fd]">0</div>
+                <div class="text-[10px] uppercase text-gray-600">Consolidations</div>
+            </div>
+
+            <div class="mt-auto pt-6 border-t border-gray-800 text-center">
+                <p class="text-[11px] text-gray-600 uppercase tracking-widest mb-4">Powered by</p>
+                <div class="flex justify-center gap-4">
+                    <img src="/docs/Gemini_logo.png" class="h-6 opacity-80" alt="Gemini">
+                    <img src="/docs/adk_logo.png" class="h-6 opacity-80" alt="ADK">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-8">
+            <header class="text-center mb-12">
+                <span class="text-5xl">🧠</span>
+                <h1 class="text-4xl font-bold mt-4 mb-2 bg-gradient-to-r from-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">
+                    Always On Agent Memory Layer
+                </h1>
+                <p class="text-gray-500 max-w-xl mx-auto">
+                    Always-on memory agent that processes, consolidates, and connects information.
+                    Built with <span class="text-[#93c5fd]">Google ADK</span> + <span class="text-[#c4b5fd]">Gemini 3.1 Flash-Lite</span>.
+                </p>
+            </header>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-800 mb-8 justify-center gap-8">
+                <button onclick="switchTab('ingest')" id="tab-ingest-btn" class="pb-4 border-b-2 border-[#c4b5fd] text-[#c4b5fd] font-medium">📥 Ingest</button>
+                <button onclick="switchTab('query')" id="tab-query-btn" class="pb-4 border-b-2 border-transparent text-gray-500 hover:text-gray-300">🔍 Query</button>
+                <button onclick="switchTab('memories')" id="tab-memories-btn" class="pb-4 border-b-2 border-transparent text-gray-500 hover:text-gray-300">🧠 Memory Bank</button>
+            </div>
+
+            <!-- Ingest Tab -->
+            <div id="tab-ingest" class="tab-content">
+                <div class="max-w-4xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-2">Feed information into memory</h3>
+                    <p class="text-gray-500 text-sm mb-6">Paste text or drop files. The IngestAgent processes everything automatically.</p>
+
+                    <textarea id="ingest-text" rows="6" class="w-full bg-[#12121a] border border-gray-800 rounded-lg p-4 mb-4 focus:ring-2 focus:ring-[#c4b5fd] outline-none" placeholder="Paste text here..."></textarea>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <button onclick="processText()" class="bg-[#c4b5fd] text-black font-bold py-3 rounded-lg hover:bg-[#b3a0f0] transition-colors">
+                            ⚡ Process into Memory
+                        </button>
+                        <div class="relative group">
+                            <button class="w-full bg-gray-800 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+                                📋 Samples
+                            </button>
+                            <div class="absolute w-full mt-2 bg-[#12121a] border border-gray-800 rounded-lg shadow-xl hidden group-hover:block z-10">
+                                <button onclick="useSample(0)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📰 AI Agents in Production</button>
+                                <button onclick="useSample(1)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📧 Meeting Notes: Q1 Planning</button>
+                                <button onclick="useSample(2)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📄 Research: Memory in LLM Systems</button>
+                                <button onclick="useSample(3)" class="w-full text-left p-3 hover:bg-gray-800">💡 Product Idea: Smart Inbox</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-800 pt-8">
+                        <h3 class="text-xl font-semibold mb-2">📎 Upload Files</h3>
+                        <p class="text-gray-500 text-sm mb-6">Upload images, audio, video, PDFs, or text files.</p>
+
+                        <div id="drop-zone" class="border-2 border-dashed border-gray-800 rounded-xl p-12 text-center hover:border-[#c4b5fd] transition-colors cursor-pointer">
+                            <input type="file" id="file-input" multiple class="hidden">
+                            <div class="text-4xl mb-4">📁</div>
+                            <p class="text-gray-400">Click to upload or drag and drop files here</p>
+                            <p class="text-xs text-gray-600 mt-2">Supported: txt, md, pdf, png, jpg, mp3, mp4, etc.</p>
+                        </div>
+                        <div id="file-list" class="mt-4 space-y-2"></div>
+                    </div>
+
+                    <div class="border-t border-gray-800 pt-8 mt-8">
+                        <h3 class="text-xl font-semibold mb-2">🔄 Consolidate Memories</h3>
+                        <p class="text-gray-500 text-sm mb-6">Trigger the ConsolidateAgent manually.</p>
+                        <button onclick="runConsolidation()" class="w-full bg-gray-800 hover:bg-gray-700 py-3 rounded-lg font-bold transition-colors">
+                            🔄 Run Consolidation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Tab -->
+            <div id="tab-query" class="tab-content hidden">
+                <div class="max-w-4xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-2">Ask your memory anything</h3>
+                    <p class="text-gray-500 text-sm mb-6">The QueryAgent searches all memories and synthesizes answers.</p>
+
+                    <div class="flex gap-2 mb-8">
+                        <input type="text" id="query-input" class="flex-1 bg-[#12121a] border border-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-[#c4b5fd] outline-none" placeholder="What do you know about AI agents?">
+                        <button onclick="runQuery()" class="bg-[#c4b5fd] text-black font-bold px-8 rounded-lg hover:bg-[#b3a0f0]">Ask</button>
+                    </div>
+
+                    <div id="query-result" class="hidden">
+                        <!-- Result Card -->
+                        <div class="bg-[rgba(139,92,246,0.05)] border border-[rgba(139,92,246,0.15)] rounded-xl p-6">
+                            <span id="query-time" class="text-xs text-[#a78bfa]">0.0s</span>
+                            <div id="query-answer" class="text-gray-300 leading-relaxed mt-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 grid grid-cols-2 gap-4">
+                        <button onclick="useQuery('What are the main themes across everything you remember?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What are the main themes?</button>
+                        <button onclick="useQuery('What connections do you see between different memories?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What connections do you see?</button>
+                        <button onclick="useQuery('What should I focus on based on what you know?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What should I focus on?</button>
+                        <button onclick="useQuery('Summarize everything in 3 bullet points.')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 Summarize in 3 bullet points</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Memories Tab -->
+            <div id="tab-memories" class="tab-content hidden">
+                <div class="max-w-4xl mx-auto">
+                    <h3 class="text-xl font-semibold mb-6">Stored Memories</h3>
+                    <div id="memory-list" class="space-y-4">
+                        <!-- Memory cards injected here -->
+                    </div>
+
+                    <div class="mt-12 border-t border-red-900/30 pt-8">
+                        <h3 class="text-xl font-semibold mb-2 text-red-500">⚠️ Danger Zone</h3>
+                        <p class="text-gray-500 text-sm mb-4">Permanently delete all memories and files.</p>
+                        <button onclick="clearAll()" class="w-full bg-red-900/20 border border-red-900/50 text-red-500 py-3 rounded-lg hover:bg-red-900/30 transition-colors">
+                            🗑️ Clear All Memories
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SAMPLES = [
+            { text: "Anthropic released a report showing that 62% of Claude usage is now code-related, with AI agents being the fastest growing category. Companies are deploying agents for customer support, code review, and data analysis. The key challenge remains reliability: agents fail silently and need human oversight loops." },
+            { text: "Discussed Q1 priorities: 1) Ship the new API by March 15, 2) Hire two backend engineers, 3) Reduce inference costs by 40% by switching to smaller models for routing tasks. Sarah will lead the API project. Budget approved for $50k in cloud compute." },
+            { text: "Current approaches to LLM memory: 1) Vector databases with RAG: good for retrieval but no active processing. 2) Conversation summarization: loses detail over time. 3) Knowledge graphs: expensive to maintain. The gap: no system actively consolidates and connects information like human memory does." },
+            { text: "What if email had an AI layer that continuously reads, categorizes, and summarizes incoming mail? Not just filtering: actually understanding context across conversations. Competitors: Superhuman (fast UI, no AI summary), Shortwave (some AI, limited memory)." }
+        ];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('[id$="-btn"]').forEach(b => {
+                b.classList.remove('border-[#c4b5fd]', 'text-[#c4b5fd]');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId + '-btn').classList.add('border-[#c4b5fd]', 'text-[#c4b5fd]');
+            document.getElementById('tab-' + tabId + '-btn').classList.remove('border-transparent', 'text-gray-500');
+
+            if (tabId === 'memories') fetchMemories();
+        }
+
+        async function updateStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                document.getElementById('agent-dot').classList.remove('text-red-500');
+                document.getElementById('agent-dot').classList.add('text-green-500');
+                document.getElementById('agent-status-text').innerText = 'Agent Online';
+                document.getElementById('total-memories').innerText = data.total_memories ?? 0;
+                document.getElementById('pending-memories').innerText = data.unconsolidated ?? 0;
+                document.getElementById('consolidations').innerText = data.consolidations ?? 0;
+            } catch (e) {
+                document.getElementById('agent-dot').classList.remove('text-green-500');
+                document.getElementById('agent-dot').classList.add('text-red-500');
+                document.getElementById('agent-status-text').innerText = 'Agent Offline';
+                document.getElementById('total-memories').innerText = '0';
+                document.getElementById('pending-memories').innerText = '0';
+                document.getElementById('consolidations').innerText = '0';
+            }
+        }
+
+        function useSample(index) {
+            document.getElementById('ingest-text').value = SAMPLES[index].text;
+        }
+
+        async function processText() {
+            const text = document.getElementById('ingest-text').value;
+            if (!text) return;
+            const res = await fetch('/api/ingest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, source: 'dashboard' })
+            });
+            const data = await res.json();
+            alert(data.response || 'Success');
+            document.getElementById('ingest-text').value = '';
+            updateStatus();
+        }
+
+        async function runConsolidation() {
+            const res = await fetch('/api/consolidate', { method: 'POST' });
+            const data = await res.json();
+            alert(data.response || 'Consolidation complete');
+            updateStatus();
+        }
+
+        function useQuery(q) {
+            document.getElementById('query-input').value = q;
+            runQuery();
+        }
+
+        async function runQuery() {
+            const q = document.getElementById('query-input').value;
+            if (!q) return;
+            const t0 = performance.now();
+            const res = await fetch(`/api/query?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            const t1 = performance.now();
+
+            document.getElementById('query-result').classList.remove('hidden');
+            document.getElementById('query-time').innerText = ((t1 - t0) / 1000).toFixed(1) + 's';
+            document.getElementById('query-answer').innerText = data.answer;
+        }
+
+        async function fetchMemories() {
+            const res = await fetch('/api/memories');
+            const data = await res.json();
+            const list = document.getElementById('memory-list');
+            list.innerHTML = '';
+
+            data.memories.forEach(m => {
+                const importance = m.importance || 0.5;
+                const color = importance >= 0.7 ? '#4ade80' : importance >= 0.4 ? '#fbbf24' : '#555';
+
+                const card = document.createElement('div');
+                card.className = 'memory-card group flex justify-between items-start';
+                card.style.borderLeftColor = color;
+
+                card.innerHTML = `
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center mb-1">
+                            <strong class="text-gray-300">Memory #${m.id}</strong>
+                            <span class="text-[11px] text-gray-600">${m.created_at.slice(0, 16)} ${m.source ? ' | ' + m.source : ''}</span>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-3">${m.summary}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${m.topics.map(t => `<span class="tag">${t}</span>`).join('')}
+                            ${m.entities.slice(0, 5).map(e => `<span class="entity">${e}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button onclick="deleteMemory(${m.id})" class="text-gray-700 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity">🗑️</button>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        async function deleteMemory(id) {
+            if (!confirm(`Delete memory #${id}?`)) return;
+            await fetch('/api/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ memory_id: id })
+            });
+            fetchMemories();
+            updateStatus();
+        }
+
+        async function clearAll() {
+            if (!confirm('Permanently delete ALL memories and files?')) return;
+            await fetch('/api/clear', { method: 'POST' });
+            fetchMemories();
+            updateStatus();
+        }
+
+        // File upload handling
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.onclick = () => fileInput.click();
+
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-[#c4b5fd]');
+        };
+
+        dropZone.ondragleave = () => {
+            dropZone.classList.remove('border-[#c4b5fd]');
+        };
+
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-[#c4b5fd]');
+            handleFiles(e.dataTransfer.files);
+        };
+
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        async function handleFiles(files) {
+            const list = document.getElementById('file-list');
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const item = document.createElement('div');
+                item.className = 'text-xs text-gray-500 flex items-center gap-2';
+                item.innerHTML = `<span>⏳</span> Uploading ${file.name}...`;
+                list.appendChild(item);
+
+                try {
+                    const res = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        item.innerHTML = `<span>✅</span> <strong>${file.name}</strong> saved to inbox`;
+                    } else {
+                        item.innerHTML = `<span>❌</span> Error uploading ${file.name}: ${data.error}`;
+                    }
+                } catch (e) {
+                    item.innerHTML = `<span>❌</span> Failed to upload ${file.name}`;
+                }
+            }
+            updateStatus();
+        }
+
+        setInterval(updateStatus, 5000);
+        updateStatus();
+    </script>
+</body>
+</html>
