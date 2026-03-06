@@ -14,12 +14,18 @@ Usage:
 
 import os
 from pathlib import Path
+from functools import wraps
 
 import requests
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for, session
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "super-secret-key-change-me")
+
+# Default credentials (in a real app, these would be in a DB or env vars)
+DASHBOARD_USER = os.getenv("DASHBOARD_USER", "admin")
+DASHBOARD_PASS = os.getenv("DASHBOARD_PASS", "password")
 
 # Base directory for the application
 BASE_DIR = Path(__file__).resolve().parent
@@ -35,6 +41,17 @@ UPLOAD_EXTENSIONS = {
     "mp4", "webm", "mov", "avi", "mkv",
     "pdf",
 }
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "logged_in" not in session:
+            if request.is_json or request.path.startswith("/api/"):
+                return jsonify({"error": "Unauthorized"}), 401
+            return redirect(url_for("login", next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def api_get(path: str) -> dict | None:
@@ -55,7 +72,26 @@ def api_post(path: str, data: dict) -> dict | None:
         return None
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == DASHBOARD_USER and password == DASHBOARD_PASS:
+            session["logged_in"] = True
+            return redirect(url_for("index"))
+        return render_template("login.html", error="Invalid credentials")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.pop("logged_in", None)
+    return redirect(url_for("login"))
+
+
 @app.route("/")
+@login_required
 def index():
     return render_template("index.html")
 
@@ -66,49 +102,58 @@ def serve_static(filename):
 
 
 @app.route("/docs/<path:filename>")
+@login_required
 def serve_docs(filename):
     return send_from_directory(DOCS_DIR, filename)
 
 
 @app.route("/api/status")
+@login_required
 def status():
     return jsonify(api_get("/status") or {"error": "Agent offline"})
 
 
 @app.route("/api/memories")
+@login_required
 def memories():
     return jsonify(api_get("/memories") or {"memories": [], "count": 0})
 
 
 @app.route("/api/ingest", methods=["POST"])
+@login_required
 def ingest():
     data = request.json
     return jsonify(api_post("/ingest", data) or {"error": "Failed to ingest"})
 
 
 @app.route("/api/consolidate", methods=["POST"])
+@login_required
 def consolidate():
     return jsonify(api_post("/consolidate", {}) or {"error": "Failed to consolidate"})
 
 
 @app.route("/api/query")
+@login_required
 def query():
     q = request.args.get("q", "")
     return jsonify(api_get(f"/query?q={q}") or {"error": "Failed to query"})
 
 
 @app.route("/api/delete", methods=["POST"])
+@login_required
 def delete():
     data = request.json
     return jsonify(api_post("/delete", data) or {"error": "Failed to delete"})
 
 
 @app.route("/api/clear", methods=["POST"])
+@login_required
 def clear():
     return jsonify(api_post("/clear", {}) or {"error": "Failed to clear"})
 
 
 @app.route("/api/upload", methods=["POST"])
+@login_required
 def upload():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400

@@ -359,14 +359,18 @@ def build_agents():
     query_agent = Agent(
         name="query_agent",
         model=MODEL,
-        description="Answers questions using stored memories.",
+        description="Answers questions using stored memories, including compliance and violation checks.",
         instruction=(
             "You are a Memory Query Agent. When asked a question:\n"
             "1. Call read_all_memories to access the memory store\n"
             "2. Call read_consolidation_history for higher-level insights\n"
             "3. Synthesize an answer based ONLY on stored memories\n"
             "4. Reference memory IDs: [Memory 1], [Memory 2], etc.\n"
-            "5. If no relevant memories exist, say so honestly\n\n"
+            "5. Special Case: If the user provides data (like accounting JSON) and asks for a compliance or violation check:\n"
+            "   - Compare the provided data against any relevant laws, regulations, or rules found in the memories.\n"
+            "   - Explicitly state whether the data is 'Compliant' or 'Not Compliant' / 'Violation Found'.\n"
+            "   - Cite the specific memory containing the rule or law that was used for the check.\n"
+            "6. If no relevant memories exist to answer the question or perform the check, say so honestly\n\n"
             "Be thorough but concise. Always cite sources."
         ),
         tools=[read_all_memories, read_consolidation_history],
@@ -381,7 +385,7 @@ def build_agents():
             "Route requests to the right sub-agent:\n"
             "- New information -> ingest_agent\n"
             "- Consolidation request -> consolidate_agent\n"
-            "- Questions -> query_agent\n"
+            "- Questions or compliance checks -> query_agent\n"
             "- Status check -> call get_memory_stats and report\n\n"
             "After the sub-agent completes, give a brief summary."
         ),
