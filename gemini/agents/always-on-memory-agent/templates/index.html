@@ -6,49 +6,51 @@
     <title>Always On Memory Agent Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0a0a0f; color: #e8e8e8; }
-        .stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; text-align: center; }
-        .memory-card { border-left: 3px solid #555; padding: 8px 16px; margin: 8px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
-        .tag { background: rgba(139,92,246,0.15); color: #c4b5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
-        .entity { background: rgba(59,130,246,0.15); color: #93c5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+        body { background-color: #ffffff; color: #1f2937; }
+        .stat-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; text-align: center; }
+        .memory-card { border-left: 3px solid #9ca3af; padding: 12px 16px; margin: 8px 0; background: #ffffff; border: 1px solid #f3f4f6; border-left-width: 3px; border-radius: 4px 8px 8px 4px; }
+        .tag { background: #ede9fe; color: #6d28d9; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .entity { background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+        .tab-btn-active { border-bottom: 2px solid #8b5cf6; color: #8b5cf6; font-weight: 600; }
+        .tab-btn-inactive { border-bottom: 2px solid transparent; color: #6b7280; }
     </style>
 </head>
 <body class="font-sans">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <aside class="w-64 bg-[#08080d] p-6 border-r border-gray-800 flex flex-col">
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <aside class="w-64 bg-[#f8fafc] p-6 border-r border-gray-200 flex flex-col">
+            <h2 class="text-lg font-bold mb-6 flex items-center gap-2 text-gray-800">
                 <span>🧠</span> Agent Status
             </h2>
             <div id="status-container">
-                <div class="stat-card mb-4">
+                <div class="stat-card mb-4 shadow-sm">
                     <div id="agent-dot" class="text-2xl text-red-500">●</div>
-                    <div id="agent-status-text" class="text-[11px] uppercase tracking-widest text-gray-500">Agent Offline</div>
+                    <div id="agent-status-text" class="text-[11px] uppercase tracking-widest text-gray-500 font-semibold">Agent Offline</div>
                 </div>
             </div>
 
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4 mt-6">Memory Stats</h3>
+            <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4 mt-6">Memory Stats</h3>
             <div class="grid grid-cols-2 gap-2">
-                <div class="stat-card">
-                    <div id="total-memories" class="text-2xl font-bold text-[#c4b5fd]">0</div>
-                    <div class="text-[10px] uppercase text-gray-600">Memories</div>
+                <div class="stat-card shadow-sm">
+                    <div id="total-memories" class="text-2xl font-bold text-[#7c3aed]">0</div>
+                    <div class="text-[10px] uppercase text-gray-500 font-medium">Memories</div>
                 </div>
-                <div class="stat-card">
-                    <div id="pending-memories" class="text-2xl font-bold text-[#c4b5fd]">0</div>
-                    <div class="text-[10px] uppercase text-gray-600">Pending</div>
+                <div class="stat-card shadow-sm">
+                    <div id="pending-memories" class="text-2xl font-bold text-[#7c3aed]">0</div>
+                    <div class="text-[10px] uppercase text-gray-500 font-medium">Pending</div>
                 </div>
             </div>
-            <div class="stat-card mt-2">
-                <div id="consolidations" class="text-2xl font-bold text-[#c4b5fd]">0</div>
-                <div class="text-[10px] uppercase text-gray-600">Consolidations</div>
+            <div class="stat-card mt-2 shadow-sm">
+                <div id="consolidations" class="text-2xl font-bold text-[#7c3aed]">0</div>
+                <div class="text-[10px] uppercase text-gray-500 font-medium">Consolidations</div>
             </div>
 
-            <div class="mt-auto pt-6 border-t border-gray-800 text-center">
-                <a href="/logout" class="block w-full py-2 mb-6 text-sm text-gray-500 hover:text-red-400 border border-gray-800 rounded-lg transition-colors">Logout</a>
-                <p class="text-[11px] text-gray-600 uppercase tracking-widest mb-4">Powered by</p>
+            <div class="mt-auto pt-6 border-t border-gray-200 text-center">
+                <a href="/logout" class="block w-full py-2 mb-6 text-sm text-gray-500 hover:text-red-600 border border-gray-200 rounded-lg transition-colors bg-white shadow-sm">Logout</a>
+                <p class="text-[11px] text-gray-400 uppercase tracking-widest mb-4">Powered by</p>
                 <div class="flex justify-center gap-4">
-                    <img src="/docs/Gemini_logo.png" class="h-6 opacity-80" alt="Gemini">
-                    <img src="/docs/adk_logo.png" class="h-6 opacity-80" alt="ADK">
+                    <img src="/docs/Gemini_logo.png" class="h-6 grayscale opacity-60" alt="Gemini">
+                    <img src="/docs/adk_logo.png" class="h-6 grayscale opacity-60" alt="ADK">
                 </div>
             </div>
         </aside>
@@ -57,64 +59,67 @@
         <main class="flex-1 overflow-y-auto p-8">
             <header class="text-center mb-12">
                 <span class="text-5xl">🧠</span>
-                <h1 class="text-4xl font-bold mt-4 mb-2 bg-gradient-to-r from-[#c4b5fd] to-[#93c5fd] bg-clip-text text-transparent">
+                <h1 class="text-4xl font-extrabold mt-4 mb-2 text-gray-900 tracking-tight">
                     Always On Agent Memory Layer
                 </h1>
-                <p class="text-gray-500 max-w-xl mx-auto">
+                <p class="text-gray-500 max-w-xl mx-auto text-lg">
                     Always-on memory agent that processes, consolidates, and connects information.
-                    Built with <span class="text-[#93c5fd]">Google ADK</span> + <span class="text-[#c4b5fd]">Gemini 3.1 Flash-Lite</span>.
                 </p>
+                <div class="mt-4 flex justify-center gap-2 text-sm font-medium">
+                    <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-100">Google ADK</span>
+                    <span class="px-3 py-1 bg-purple-50 text-purple-700 rounded-full border border-purple-100">Gemini 3.1 Flash-Lite</span>
+                </div>
             </header>
 
             <!-- Tabs -->
-            <div class="flex border-b border-gray-800 mb-8 justify-center gap-8">
-                <button onclick="switchTab('ingest')" id="tab-ingest-btn" class="pb-4 border-b-2 border-[#c4b5fd] text-[#c4b5fd] font-medium">📥 Ingest</button>
-                <button onclick="switchTab('query')" id="tab-query-btn" class="pb-4 border-b-2 border-transparent text-gray-500 hover:text-gray-300">🔍 Query</button>
-                <button onclick="switchTab('memories')" id="tab-memories-btn" class="pb-4 border-b-2 border-transparent text-gray-500 hover:text-gray-300">🧠 Memory Bank</button>
+            <div class="flex border-b border-gray-200 mb-8 justify-center gap-12">
+                <button onclick="switchTab('ingest')" id="tab-ingest-btn" class="pb-4 tab-btn-active">📥 Ingest</button>
+                <button onclick="switchTab('query')" id="tab-query-btn" class="pb-4 tab-btn-inactive hover:text-gray-800">🔍 Query</button>
+                <button onclick="switchTab('memories')" id="tab-memories-btn" class="pb-4 tab-btn-inactive hover:text-gray-800">🧠 Memory Bank</button>
             </div>
 
             <!-- Ingest Tab -->
             <div id="tab-ingest" class="tab-content">
                 <div class="max-w-4xl mx-auto">
-                    <h3 class="text-xl font-semibold mb-2">Feed information into memory</h3>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Feed information into memory</h3>
                     <p class="text-gray-500 text-sm mb-6">Paste text or drop files. The IngestAgent processes everything automatically.</p>
 
-                    <textarea id="ingest-text" rows="6" class="w-full bg-[#12121a] border border-gray-800 rounded-lg p-4 mb-4 focus:ring-2 focus:ring-[#c4b5fd] outline-none" placeholder="Paste text here..."></textarea>
+                    <textarea id="ingest-text" rows="6" class="w-full bg-white border border-gray-300 rounded-xl p-4 mb-4 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none shadow-sm transition-all" placeholder="Paste text here..."></textarea>
 
                     <div class="grid grid-cols-2 gap-4 mb-8">
-                        <button onclick="processText()" class="bg-[#c4b5fd] text-black font-bold py-3 rounded-lg hover:bg-[#b3a0f0] transition-colors">
+                        <button onclick="processText()" class="bg-[#7c3aed] text-white font-bold py-3 rounded-xl hover:bg-[#6d28d9] transition-all shadow-md hover:shadow-lg active:scale-[0.98]">
                             ⚡ Process into Memory
                         </button>
                         <div class="relative group">
-                            <button class="w-full bg-gray-800 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2">
+                            <button class="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors">
                                 📋 Samples
                             </button>
-                            <div class="absolute w-full mt-2 bg-[#12121a] border border-gray-800 rounded-lg shadow-xl hidden group-hover:block z-10">
-                                <button onclick="useSample(0)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📰 AI Agents in Production</button>
-                                <button onclick="useSample(1)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📧 Meeting Notes: Q1 Planning</button>
-                                <button onclick="useSample(2)" class="w-full text-left p-3 hover:bg-gray-800 border-b border-gray-800">📄 Research: Memory in LLM Systems</button>
-                                <button onclick="useSample(3)" class="w-full text-left p-3 hover:bg-gray-800">💡 Product Idea: Smart Inbox</button>
+                            <div class="absolute w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl hidden group-hover:block z-10 overflow-hidden">
+                                <button onclick="useSample(0)" class="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 text-sm">📰 AI Agents in Production</button>
+                                <button onclick="useSample(1)" class="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 text-sm">📧 Meeting Notes: Q1 Planning</button>
+                                <button onclick="useSample(2)" class="w-full text-left p-3 hover:bg-gray-50 border-b border-gray-100 text-sm">📄 Research: Memory in LLM Systems</button>
+                                <button onclick="useSample(3)" class="w-full text-left p-3 hover:bg-gray-50 text-sm">💡 Product Idea: Smart Inbox</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-800 pt-8">
-                        <h3 class="text-xl font-semibold mb-2">📎 Upload Files</h3>
+                    <div class="border-t border-gray-200 pt-8">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">📎 Upload Files</h3>
                         <p class="text-gray-500 text-sm mb-6">Upload images, audio, video, PDFs, or text files.</p>
 
-                        <div id="drop-zone" class="border-2 border-dashed border-gray-800 rounded-xl p-12 text-center hover:border-[#c4b5fd] transition-colors cursor-pointer">
+                        <div id="drop-zone" class="border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer group bg-gray-50">
                             <input type="file" id="file-input" multiple class="hidden">
-                            <div class="text-4xl mb-4">📁</div>
-                            <p class="text-gray-400">Click to upload or drag and drop files here</p>
-                            <p class="text-xs text-gray-600 mt-2">Supported: txt, md, pdf, png, jpg, mp3, mp4, etc.</p>
+                            <div class="text-4xl mb-4 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all">📁</div>
+                            <p class="text-gray-500 font-medium">Click to upload or drag and drop files here</p>
+                            <p class="text-xs text-gray-400 mt-2">Supported: txt, md, pdf, png, jpg, mp3, mp4, etc.</p>
                         </div>
                         <div id="file-list" class="mt-4 space-y-2"></div>
                     </div>
 
-                    <div class="border-t border-gray-800 pt-8 mt-8">
-                        <h3 class="text-xl font-semibold mb-2">🔄 Consolidate Memories</h3>
+                    <div class="border-t border-gray-200 pt-8 mt-8">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">🔄 Consolidate Memories</h3>
                         <p class="text-gray-500 text-sm mb-6">Trigger the ConsolidateAgent manually.</p>
-                        <button onclick="runConsolidation()" class="w-full bg-gray-800 hover:bg-gray-700 py-3 rounded-lg font-bold transition-colors">
+                        <button onclick="runConsolidation()" class="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 py-3 rounded-xl font-bold transition-all shadow-sm">
                             🔄 Run Consolidation
                         </button>
                     </div>
@@ -124,28 +129,28 @@
             <!-- Query Tab -->
             <div id="tab-query" class="tab-content hidden">
                 <div class="max-w-4xl mx-auto">
-                    <h3 class="text-xl font-semibold mb-2">Ask your memory anything</h3>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Ask your memory anything</h3>
                     <p class="text-gray-500 text-sm mb-6">The QueryAgent searches all memories and synthesizes answers.</p>
 
                     <div class="flex gap-2 mb-8">
-                        <input type="text" id="query-input" class="flex-1 bg-[#12121a] border border-gray-800 rounded-lg p-4 focus:ring-2 focus:ring-[#c4b5fd] outline-none" placeholder="What do you know about AI agents?">
-                        <button onclick="runQuery()" class="bg-[#c4b5fd] text-black font-bold px-8 rounded-lg hover:bg-[#b3a0f0]">Ask</button>
+                        <input type="text" id="query-input" class="flex-1 bg-white border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-purple-500 outline-none shadow-sm transition-all" placeholder="What do you know about AI agents?">
+                        <button onclick="runQuery()" class="bg-[#7c3aed] text-white font-bold px-8 rounded-xl hover:bg-[#6d28d9] transition-all shadow-md">Ask</button>
                     </div>
 
-                    <div id="query-result" class="hidden">
+                    <div id="query-result" class="hidden mb-8">
                         <!-- Result Card -->
-                        <div class="bg-[rgba(139,92,246,0.05)] border border-[rgba(139,92,246,0.15)] rounded-xl p-6">
-                            <span id="query-time" class="text-xs text-[#a78bfa]">0.0s</span>
-                            <div id="query-answer" class="text-gray-300 leading-relaxed mt-2"></div>
+                        <div class="bg-purple-50 border border-purple-100 rounded-2xl p-6 shadow-sm">
+                            <span id="query-time" class="text-xs text-purple-600 font-bold tracking-widest uppercase">0.0s</span>
+                            <div id="query-answer" class="text-gray-800 leading-relaxed mt-4 text-lg"></div>
                         </div>
                     </div>
 
                     <div class="mt-8 grid grid-cols-2 gap-4">
-                        <button onclick="useQuery('What are the main themes across everything you remember?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What are the main themes?</button>
-                        <button onclick="useQuery('What connections do you see between different memories?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What connections do you see?</button>
-                        <button onclick="useQuery('What should I focus on based on what you know?')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 What should I focus on?</button>
-                        <button onclick="useQuery('Summarize everything in 3 bullet points.')" class="text-left text-sm p-3 bg-[#12121a] border border-gray-800 rounded-lg hover:border-[#c4b5fd]">💬 Summarize in 3 bullet points</button>
-                        <button onclick="useQuery('Is this accounting data compliant with law? Data: {\'tax_id\': \'123\', \'revenue\': 500000000}')" class="text-left text-sm p-3 bg-[#12121a] border border-red-900/30 rounded-lg hover:border-red-500">⚖️ Compliance Check Example</button>
+                        <button onclick="useQuery('What are the main themes across everything you remember?')" class="text-left text-sm p-4 bg-white border border-gray-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all shadow-sm">💬 What are the main themes?</button>
+                        <button onclick="useQuery('What connections do you see between different memories?')" class="text-left text-sm p-4 bg-white border border-gray-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all shadow-sm">💬 What connections do you see?</button>
+                        <button onclick="useQuery('What should I focus on based on what you know?')" class="text-left text-sm p-4 bg-white border border-gray-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all shadow-sm">💬 What should I focus on?</button>
+                        <button onclick="useQuery('Summarize everything in 3 bullet points.')" class="text-left text-sm p-4 bg-white border border-gray-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-all shadow-sm">💬 Summarize in 3 bullet points</button>
+                        <button onclick="useQuery('Is this accounting data compliant with law? Data: {\'tax_id\': \'123\', \'revenue\': 500000000}')" class="text-left text-sm p-4 bg-white border border-red-100 rounded-xl hover:border-red-400 hover:bg-red-50 transition-all shadow-sm text-red-700">⚖️ Compliance Check Example</button>
                     </div>
                 </div>
             </div>
@@ -153,15 +158,15 @@
             <!-- Memories Tab -->
             <div id="tab-memories" class="tab-content hidden">
                 <div class="max-w-4xl mx-auto">
-                    <h3 class="text-xl font-semibold mb-6">Stored Memories</h3>
+                    <h3 class="text-xl font-bold mb-6 text-gray-800">Stored Memories</h3>
                     <div id="memory-list" class="space-y-4">
                         <!-- Memory cards injected here -->
                     </div>
 
-                    <div class="mt-12 border-t border-red-900/30 pt-8">
-                        <h3 class="text-xl font-semibold mb-2 text-red-500">⚠️ Danger Zone</h3>
+                    <div class="mt-12 border-t border-red-100 pt-8">
+                        <h3 class="text-xl font-bold mb-2 text-red-600">⚠️ Danger Zone</h3>
                         <p class="text-gray-500 text-sm mb-4">Permanently delete all memories and files.</p>
-                        <button onclick="clearAll()" class="w-full bg-red-900/20 border border-red-900/50 text-red-500 py-3 rounded-lg hover:bg-red-900/30 transition-colors">
+                        <button onclick="clearAll()" class="w-full bg-white border border-red-200 text-red-600 py-3 rounded-xl hover:bg-red-50 font-bold transition-all shadow-sm">
                             🗑️ Clear All Memories
                         </button>
                     </div>
@@ -181,13 +186,13 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('[id$="-btn"]').forEach(b => {
-                b.classList.remove('border-[#c4b5fd]', 'text-[#c4b5fd]');
-                b.classList.add('border-transparent', 'text-gray-500');
+                b.classList.remove('tab-btn-active');
+                b.classList.add('tab-btn-inactive');
             });
 
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('tab-' + tabId + '-btn').classList.add('border-[#c4b5fd]', 'text-[#c4b5fd]');
-            document.getElementById('tab-' + tabId + '-btn').classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById('tab-' + tabId + '-btn').classList.add('tab-btn-active');
+            document.getElementById('tab-' + tabId + '-btn').classList.remove('tab-btn-inactive');
 
             if (tabId === 'memories') fetchMemories();
         }
@@ -202,6 +207,7 @@
                 document.getElementById('agent-dot').classList.remove('text-red-500');
                 document.getElementById('agent-dot').classList.add('text-green-500');
                 document.getElementById('agent-status-text').innerText = 'Agent Online';
+                document.getElementById('agent-status-text').classList.replace('text-gray-500', 'text-green-600');
                 document.getElementById('total-memories').innerText = data.total_memories ?? 0;
                 document.getElementById('pending-memories').innerText = data.unconsolidated ?? 0;
                 document.getElementById('consolidations').innerText = data.consolidations ?? 0;
@@ -209,6 +215,7 @@
                 document.getElementById('agent-dot').classList.remove('text-green-500');
                 document.getElementById('agent-dot').classList.add('text-red-500');
                 document.getElementById('agent-status-text').innerText = 'Agent Offline';
+                document.getElementById('agent-status-text').classList.replace('text-green-600', 'text-gray-500');
                 document.getElementById('total-memories').innerText = '0';
                 document.getElementById('pending-memories').innerText = '0';
                 document.getElementById('consolidations').innerText = '0';
@@ -266,25 +273,25 @@
 
             data.memories.forEach(m => {
                 const importance = m.importance || 0.5;
-                const color = importance >= 0.7 ? '#4ade80' : importance >= 0.4 ? '#fbbf24' : '#555';
+                const color = importance >= 0.7 ? '#10b981' : importance >= 0.4 ? '#f59e0b' : '#9ca3af';
 
                 const card = document.createElement('div');
-                card.className = 'memory-card group flex justify-between items-start';
+                card.className = 'memory-card group flex justify-between items-start shadow-sm hover:shadow-md transition-all';
                 card.style.borderLeftColor = color;
 
                 card.innerHTML = `
                     <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
-                            <strong class="text-gray-300">Memory #${m.id}</strong>
-                            <span class="text-[11px] text-gray-600">${m.created_at.slice(0, 16)} ${m.source ? ' | ' + m.source : ''}</span>
+                            <strong class="text-gray-900">Memory #${m.id}</strong>
+                            <span class="text-[11px] text-gray-400 font-medium">${m.created_at.slice(0, 16)} ${m.source ? ' | ' + m.source : ''}</span>
                         </div>
-                        <p class="text-sm text-gray-400 mb-3">${m.summary}</p>
+                        <p class="text-sm text-gray-600 mb-3 leading-relaxed">${m.summary}</p>
                         <div class="flex flex-wrap gap-2">
                             ${m.topics.map(t => `<span class="tag">${t}</span>`).join('')}
                             ${m.entities.slice(0, 5).map(e => `<span class="entity">${e}</span>`).join('')}
                         </div>
                     </div>
-                    <button onclick="deleteMemory(${m.id})" class="text-gray-700 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity">🗑️</button>
+                    <button onclick="deleteMemory(${m.id})" class="text-gray-300 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity">🗑️</button>
                 `;
                 list.appendChild(card);
             });
@@ -316,16 +323,19 @@
 
         dropZone.ondragover = (e) => {
             e.preventDefault();
-            dropZone.classList.add('border-[#c4b5fd]');
+            dropZone.classList.add('border-purple-400');
+            dropZone.classList.add('bg-purple-50');
         };
 
         dropZone.ondragleave = () => {
-            dropZone.classList.remove('border-[#c4b5fd]');
+            dropZone.classList.remove('border-purple-400');
+            dropZone.classList.remove('bg-purple-50');
         };
 
         dropZone.ondrop = (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-[#c4b5fd]');
+            dropZone.classList.remove('border-purple-400');
+            dropZone.classList.remove('bg-purple-50');
             handleFiles(e.dataTransfer.files);
         };
 
@@ -338,7 +348,7 @@
                 formData.append('file', file);
 
                 const item = document.createElement('div');
-                item.className = 'text-xs text-gray-500 flex items-center gap-2';
+                item.className = 'text-xs text-gray-500 flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-100';
                 item.innerHTML = `<span>⏳</span> Uploading ${file.name}...`;
                 list.appendChild(item);
 
@@ -349,7 +359,7 @@
                     });
                     const data = await res.json();
                     if (data.status === 'success') {
-                        item.innerHTML = `<span>✅</span> <strong>${file.name}</strong> saved to inbox`;
+                        item.innerHTML = `<span>✅</span> <strong class="text-gray-700">${file.name}</strong> saved to inbox`;
                     } else {
                         item.innerHTML = `<span>❌</span> Error uploading ${file.name}: ${data.error}`;
                     }
