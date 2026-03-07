@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Always On Memory Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f4f6; color: #1f2937; }
+    </style>
+</head>
+<body class="font-sans flex items-center justify-center h-screen">
+    <div class="max-w-md w-full p-10 bg-white border border-gray-200 rounded-3xl shadow-xl">
+        <header class="text-center mb-10">
+            <span class="text-6xl">🧠</span>
+            <h1 class="text-3xl font-extrabold mt-6 mb-2 text-gray-900 tracking-tight">
+                Memory Agent
+            </h1>
+            <p class="text-gray-500 font-medium">Please sign in to access your memory</p>
+        </header>
+
+        {% if error %}
+        <div class="bg-red-50 border border-red-100 text-red-600 text-sm p-4 rounded-xl mb-6 font-medium">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/login" method="POST" class="space-y-6">
+            <div>
+                <label for="username" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Username</label>
+                <input type="text" name="username" id="username" required
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-gray-900 transition-all shadow-sm"
+                    placeholder="Enter your username">
+            </div>
+            <div>
+                <label for="password" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">Password</label>
+                <input type="password" name="password" id="password" required
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-gray-900 transition-all shadow-sm"
+                    placeholder="••••••••">
+            </div>
+            <button type="submit"
+                class="w-full bg-[#7c3aed] text-white font-bold py-4 rounded-xl hover:bg-[#6d28d9] transition-all shadow-lg shadow-purple-200 active:scale-[0.98] mt-4">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-10 pt-6 border-t border-gray-100 text-center">
+            <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold">
+                Default: admin / password
+            </p>
+        </div>
+    </div>
+</body>
+</html>
